@@ -9,7 +9,7 @@ async function enviarCheckout() {
   const whatsapp = whatsappRaw.replace(/\D/g, '');
 
   const cursosSelecionados = Array.from(document.querySelectorAll("input[name='curso']:checked"))
-    .map(el => parseInt(el.value));
+    .map(el => el.value); // agora envia strings
 
   if (!nome || !email || !whatsapp || cursosSelecionados.length === 0) {
     mostrarMsg("Preencha todos os campos e selecione ao menos um curso.", false);
