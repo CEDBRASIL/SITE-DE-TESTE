@@ -1,82 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout | CED</title>
-  <script>
-    const CURSO_DISCIPLINAS = {
-      "Excel PRO": [161, 197, 201],
-      "Desigh Gráfico": [254, 751, 169],
-      "Analise & Desenvolvimento de Sistemas": [590, 176, 239, 203],
-      "Administração": [129, 198, 156, 154],
-      "Inglês Fluente": [263, 280, 281],
-      "Inglês Kids": [266],
-      "Informática Essencial": [130, 599, 161, 160, 162],
-      "Especialista em Marketing & Vendas": [123, 199, 202, 264, 441, 780, 828, 829, 236, 734],
-      "Pacote Office": [161, 197, 201, 160, 162]
-    };
-
-    async function handleSubmit(event) {
-      event.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const whatsapp = document.getElementById('whatsapp').value.trim();
-      const selectedCourses = Array.from(document.querySelectorAll('input[name="courses"]:checked')).map(c => c.value);
-      if (selectedCourses.length === 0) {
-        alert("Selecione pelo menos um curso.");
-        return;
-      }
-
-      const disciplineIds = selectedCourses.flatMap(course => CURSO_DISCIPLINAS[course]);
-
-      const payload = {
-        name,
-        whatsapp,
-        selected_courses: selectedCourses,
-        discipline_ids: disciplineIds
-      };
-
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-      if (data.payment_url) {
-        window.location.href = data.payment_url;
-      } else {
-        alert(data.message || 'Erro ao gerar link de pagamento, tente novamente.');
-      }
-    }
-  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CED – Matrícula Online</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-8">
-  <div class="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-    <h1 class="text-2xl font-bold mb-4 text-center">Cadastro e Escolha dos Cursos</h1>
-    <form id="checkoutForm" onsubmit="handleSubmit(event)" class="space-y-4">
-      <input id="name" type="text" placeholder="Seu nome completo" required class="w-full p-2 border rounded">
-      <input id="whatsapp" type="tel" placeholder="WhatsApp com DDD" required class="w-full p-2 border rounded">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-xl rounded-2xl shadow-xl bg-white p-8 space-y-6">
+    <h1 class="text-2xl font-bold text-center">Matrícula – Centro de Ensino Digital</h1>
 
-      <div>
-        <p class="font-semibold mb-2">Selecione os cursos desejados:</p>
+    <form id="formCheckout" class="space-y-4" onsubmit="event.preventDefault(); enviarCheckout();">
+      <input id="nome" type="text" placeholder="Nome completo" required class="w-full border rounded p-3" />
+      <input id="whatsapp" type="tel" placeholder="WhatsApp com DDD" required class="w-full border rounded p-3" />
+
+      <fieldset>
+        <legend class="font-semibold mb-2">Selecione os cursos:</legend>
         <div class="grid grid-cols-2 gap-2">
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Excel PRO"> <span>Excel PRO</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Desigh Gráfico"> <span>Design Gráfico</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Analise & Desenvolvimento de Sistemas"> <span>ADS</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Administração"> <span>Administração</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Inglês Fluente"> <span>Inglês Fluente</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Inglês Kids"> <span>Inglês Kids</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Informática Essencial"> <span>Informática Essencial</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Especialista em Marketing & Vendas"> <span>Marketing & Vendas</span></label>
-          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Pacote Office"> <span>Pacote Office</span></label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="161" /> Administração</label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="197" /> Informática Essencial</label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="201" /> Pacote Office</label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="254" /> Design Gráfico</label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="590" /> ADS</label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="263" /> Inglês Fluente</label>
         </div>
-      </div>
+      </fieldset>
 
-      <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition">Gerar Link de Pagamento</button>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition">
+        Concluir Matrícula
+      </button>
     </form>
+
+    <div id="msg" class="text-center text-sm"></div>
   </div>
+
+  <!-- Script externo -->
+  <script src="checkout.js"></script>
 </body>
 </html>
