@@ -1,28 +1,24 @@
-// checkout.js - Versão revisada para envio seguro, logs e validações
+// checkout.js
 
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1377845855574556753/Miv-HQ4GBe1SfoXkHJkZ3piQNW_WYTHA09rr9tMqgUnizt47sZG8QdN-pZJMtYxFIHiS";
 
 async function enviarCheckout() {
-  // Captura e validação dos dados do formulário
   const nome = document.getElementById("nome").value.trim();
-
-  // Limpeza do WhatsApp para números apenas (evita erros na API)
+  const email = document.getElementById("email").value.trim();
   const whatsappRaw = document.getElementById("whatsapp").value.trim();
   const whatsapp = whatsappRaw.replace(/\D/g, '');
 
-  // Captura dos cursos selecionados, convertendo para inteiros
   const cursosSelecionados = Array.from(document.querySelectorAll("input[name='curso']:checked"))
     .map(el => parseInt(el.value));
 
-  // Valida se campos obrigatórios estão preenchidos
-  if (!nome || !whatsapp || cursosSelecionados.length === 0) {
+  if (!nome || !email || !whatsapp || cursosSelecionados.length === 0) {
     mostrarMsg("Preencha todos os campos e selecione ao menos um curso.", false);
     return;
   }
 
-  const payload = { nome, whatsapp, cursos: cursosSelecionados };
+  const payload = { nome, email, whatsapp, cursos: cursosSelecionados };
 
-  console.log("Payload enviado:", payload); // Debug no console
+  console.log("Payload enviado:", payload);
 
   try {
     const resposta = await fetch("https://matriculaapimp.onrender.com/checkout", {
@@ -33,12 +29,12 @@ async function enviarCheckout() {
 
     const resultado = await resposta.json();
 
-    console.log("Resposta da API:", resultado); // Debug no console
+    console.log("Resposta da API:", resultado);
 
     if (resposta.ok) {
-      mostrarMsg(`✅ Matrícula realizada! Login: <strong>${resultado.usuario}</strong>`, true);
+      mostrarMsg(`✅ Matrícula iniciada! Redirecionando para pagamento...`, true);
 
-      await enviarLogDiscord(`✅ Matrícula realizada com sucesso para: **${nome}** | Usuário: **${resultado.usuario}**`);
+      await enviarLogDiscord(`✅ Matrícula iniciada para: **${nome}** | Email: **${email}**`);
 
       if (resultado.mp_link) {
         setTimeout(() => {
@@ -46,7 +42,6 @@ async function enviarCheckout() {
         }, 2000);
       }
     } else {
-      // Extrai mensagem de erro com fallback
       const erroMsg = resultado.detail || resultado.message || JSON.stringify(resultado);
       mostrarMsg(`❌ Erro: ${erroMsg}`, false);
       await enviarLogDiscord(`❌ Falha na matrícula para: **${nome}** | Erro: ${erroMsg}`);
@@ -58,14 +53,12 @@ async function enviarCheckout() {
   }
 }
 
-// Função para exibir mensagens ao usuário
 function mostrarMsg(texto, sucesso) {
   const msg = document.getElementById("msg");
   msg.innerHTML = texto;
   msg.className = sucesso ? "text-green-600" : "text-red-600";
 }
 
-// Função para enviar logs para Discord
 async function enviarLogDiscord(mensagem) {
   try {
     await fetch(DISCORD_WEBHOOK_URL, {
