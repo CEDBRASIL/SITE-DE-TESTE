@@ -2,6 +2,17 @@
 
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1377845855574556753/Miv-HQ4GBe1SfoXkHJkZ3piQNW_WYTHA09rr9tMqgUnizt47sZG8QdN-pZJMtYxFIHiS";
 
+async function fetchWithTimeout(resource, options = {}, timeout = 10000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal
+  });
+  clearTimeout(id);
+  return response;
+}
+
 async function enviarCheckout() {
   const nome = document.getElementById("nome").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -21,7 +32,7 @@ async function enviarCheckout() {
   console.log("Payload enviado:", payload);
 
   try {
-    const resposta = await fetch("https://matriculaapimp.onrender.com/checkout", {
+    const resposta = await fetchWithTimeout("https://matriculaapimp.onrender.com/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
