@@ -20,17 +20,19 @@
     async function handleSubmit(event) {
       event.preventDefault();
 
-      const name = document.getElementById('name').value;
-      const whatsapp = document.getElementById('whatsapp').value;
-      const email = document.getElementById('email').value;
+      const name = document.getElementById('name').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
       const selectedCourses = Array.from(document.querySelectorAll('input[name="courses"]:checked')).map(c => c.value);
+      if (selectedCourses.length === 0) {
+        alert("Selecione pelo menos um curso.");
+        return;
+      }
 
       const disciplineIds = selectedCourses.flatMap(course => CURSO_DISCIPLINAS[course]);
 
       const payload = {
         name,
         whatsapp,
-        email,
         selected_courses: selectedCourses,
         discipline_ids: disciplineIds
       };
@@ -45,7 +47,7 @@
       if (data.payment_url) {
         window.location.href = data.payment_url;
       } else {
-        alert('Erro ao gerar link de pagamento.');
+        alert(data.message || 'Erro ao gerar link de pagamento, tente novamente.');
       }
     }
   </script>
@@ -57,20 +59,19 @@
     <form id="checkoutForm" onsubmit="handleSubmit(event)" class="space-y-4">
       <input id="name" type="text" placeholder="Seu nome completo" required class="w-full p-2 border rounded">
       <input id="whatsapp" type="tel" placeholder="WhatsApp com DDD" required class="w-full p-2 border rounded">
-      <input id="email" type="email" placeholder="Seu e-mail" required class="w-full p-2 border rounded">
 
       <div>
         <p class="font-semibold mb-2">Selecione os cursos desejados:</p>
         <div class="grid grid-cols-2 gap-2">
-          <label><input type="checkbox" name="courses" value="Excel PRO"> Excel PRO</label>
-          <label><input type="checkbox" name="courses" value="Desigh Gráfico"> Desigh Gráfico</label>
-          <label><input type="checkbox" name="courses" value="Analise & Desenvolvimento de Sistemas"> ADS</label>
-          <label><input type="checkbox" name="courses" value="Administração"> Administração</label>
-          <label><input type="checkbox" name="courses" value="Inglês Fluente"> Inglês Fluente</label>
-          <label><input type="checkbox" name="courses" value="Inglês Kids"> Inglês Kids</label>
-          <label><input type="checkbox" name="courses" value="Informática Essencial"> Informática Essencial</label>
-          <label><input type="checkbox" name="courses" value="Especialista em Marketing & Vendas"> Marketing & Vendas</label>
-          <label><input type="checkbox" name="courses" value="Pacote Office"> Pacote Office</label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Excel PRO"> <span>Excel PRO</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Desigh Gráfico"> <span>Design Gráfico</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Analise & Desenvolvimento de Sistemas"> <span>ADS</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Administração"> <span>Administração</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Inglês Fluente"> <span>Inglês Fluente</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Inglês Kids"> <span>Inglês Kids</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Informática Essencial"> <span>Informática Essencial</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Especialista em Marketing & Vendas"> <span>Marketing & Vendas</span></label>
+          <label class="flex items-center space-x-2"><input type="checkbox" name="courses" value="Pacote Office"> <span>Pacote Office</span></label>
         </div>
       </div>
 
