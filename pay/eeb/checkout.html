@@ -1,3 +1,4 @@
+<!-- /checkout.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -12,6 +13,7 @@
 
     <form id="formCheckout" class="space-y-4" onsubmit="event.preventDefault(); enviarCheckout();">
       <input id="nome" type="text" placeholder="Nome completo" required class="w-full border rounded p-3" />
+      <input id="email" type="email" placeholder="E-mail" required class="w-full border rounded p-3" />
       <input id="whatsapp" type="tel" placeholder="WhatsApp com DDD" required class="w-full border rounded p-3" />
 
       <fieldset>
@@ -21,6 +23,7 @@
           <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="197" /> Informática Essencial</label>
           <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="201" /> Pacote Office</label>
           <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="254" /> Design Gráfico</label>
+          <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="590" /> ADS</label>
           <label class="flex items-center gap-2"><input type="checkbox" name="curso" value="263" /> Inglês Fluente</label>
         </div>
       </fieldset>
@@ -33,7 +36,6 @@
     <div id="msg" class="text-center text-sm"></div>
   </div>
 
-  <!-- Script externo -->
   <script src="checkout.js"></script>
 </body>
 </html>
