@@ -34,3 +34,4 @@ function mostrarMsg(texto, sucesso) {
   const msg = document.getElementById("msg");
   msg.innerHTML = texto;
   msg.className = sucesso ? "text-green-600" : "text-red-600";
+}
