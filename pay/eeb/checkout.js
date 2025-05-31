@@ -1,72 +1,51 @@
-// checkout.js
+const API_BASE = "https://api.cedbrasilia.com.br";
 
-const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1377845855574556753/Miv-HQ4GBe1SfoXkHJkZ3piQNW_WYTHA09rr9tMqgUnizt47sZG8QdN-pZJMtYxFIHiS";
+document.addEventListener("DOMContentLoaded", () => listarCursos());
 
-async function fetchWithTimeout(resource, options = {}, timeout = 10000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-  const response = await fetch(resource, {
-    ...options,
-    signal: controller.signal
-  });
-  clearTimeout(id);
-  return response;
+function listarCursos() {
+  fetch(API_BASE + "/cursos")
+    .then(r => r.json())
+    .then(json => {
+      const container = document.getElementById("cursosContainer");
+      container.innerHTML = "";
+      Object.keys(json.cursos).forEach(nome => {
+        const id = "curso-" + nome.replace(/\s+/g, "-");
+        container.insertAdjacentHTML(
+          "beforeend",
+          `<label><input type="checkbox" name="cursos" value="${nome}" id="${id}"> ${nome}</label>`
+        );
+      });
+    })
+    .catch(() => {
+      document.getElementById("cursosContainer").textContent = "Erro ao carregar cursos.";
+    });
 }
 
-// Melhorias na validação e integração com o backend
-async function enviarCheckout() {
-  const nome = document.getElementById("nome").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const whatsappRaw = document.getElementById("whatsapp").value.trim();
-  const whatsapp = whatsappRaw.replace(/\D/g, '');
+document.getElementById("matriculaForm").addEventListener("submit", e => {
+  e.preventDefault();
 
-  const cursosSelecionados = Array.from(document.querySelectorAll("input[name='curso']:checked"))
-    .map(el => el.value);
+  const nome      = document.getElementById("nome").value.trim();
+  const email     = document.getElementById("email").value.trim();
+  const whatsapp  = document.getElementById("whatsapp").value.trim().replace(/\D/g,"");
+  const cursos    = Array.from(document.querySelectorAll("input[name='cursos']:checked")).map(c => c.value);
 
-  if (!nome || !email || !whatsapp || cursosSelecionados.length === 0) {
-    mostrarMsg("Preencha todos os campos e selecione ao menos um curso.", false);
+  if (!nome || !email || !whatsapp || cursos.length === 0) {
+    alert("Preencha todos os campos e selecione ao menos um curso.");
     return;
   }
 
-  const payload = { nome, email, whatsapp, cursos: cursosSelecionados };
-
-  try {
-    const resposta = await fetchWithTimeout("https://cedbrasilia.com.br/pay/eeb/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const resultado = await resposta.json();
-
-    if (resposta.ok) {
-      mostrarMsg(`✅ Matrícula iniciada! Redirecionando para pagamento...`, true);
-      if (resultado.mp_link) {
-        window.location.href = resultado.mp_link;
-      }
+  fetch(API_BASE + "/pay/eeb/checkout", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ nome, email, whatsapp, cursos })
+  })
+  .then(r => r.json())
+  .then(json => {
+    if (json.mp_link) {
+      window.location.href = json.mp_link;
     } else {
-      const erroMsg = resultado.detail || resultado.message || JSON.stringify(resultado);
-      mostrarMsg(`❌ Erro: ${erroMsg}`, false);
+      alert(json.detail || "Falha ao gerar link de pagamento.");
     }
-  } catch (erro) {
-    mostrarMsg("❌ Erro ao conectar com o servidor.", false);
-  }
-}
-
-function mostrarMsg(texto, sucesso) {
-  const msg = document.getElementById("msg");
-  msg.innerHTML = texto;
-  msg.className = sucesso ? "text-green-600" : "text-red-600";
-}
-
-async function enviarLogDiscord(mensagem) {
-  try {
-    await fetch(DISCORD_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: mensagem })
-    });
-  } catch (err) {
-    console.error("Falha ao enviar log para Discord:", err);
-  }
-}
+  })
+  .catch(() => alert("Erro de comunicação com o servidor."));
+});
