@@ -24,10 +24,10 @@ function listarCursos() {
 document.getElementById("matriculaForm").addEventListener("submit", e => {
   e.preventDefault();
 
-  const nome      = document.getElementById("nome").value.trim();
-  const email     = document.getElementById("email").value.trim();
-  const whatsapp  = document.getElementById("whatsapp").value.trim().replace(/\D/g,"");
-  const cursos    = Array.from(document.querySelectorAll("input[name='cursos']:checked")).map(c => c.value);
+  const nome = document.getElementById("nome").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const whatsapp = document.getElementById("whatsapp").value.trim().replace(/\D/g, "");
+  const cursos = Array.from(document.querySelectorAll("input[name='cursos']:checked")).map(c => c.value);
 
   if (!nome || !email || !whatsapp || cursos.length === 0) {
     alert("Preencha todos os campos e selecione ao menos um curso.");
@@ -45,20 +45,25 @@ document.getElementById("matriculaForm").addEventListener("submit", e => {
 
   fetch(API_BASE + "/pay/eeb/checkout", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ nome, email, whatsapp, cursos })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nome,
+      email, // Garantir que o email seja enviado
+      whatsapp,
+      cursos
+    })
   })
-  .then(r => r.json())
-  .then(json => {
-    if (json.mp_link) {
-      window.location.href = json.mp_link;
-    } else {
-      alert(json.detail || "Falha ao gerar link de pagamento.");
-    }
-  })
-  .catch(() => alert("Erro de comunicação com o servidor."))
-  .finally(() => {
-    submitButton.disabled = false;
-    submitButton.textContent = "Prosseguir para pagamento";
-  });
+    .then(r => r.json())
+    .then(json => {
+      if (json.mp_link) {
+        window.location.href = json.mp_link;
+      } else {
+        alert(json.detail || "Falha ao gerar link de pagamento.");
+      }
+    })
+    .catch(() => alert("Erro de comunicação com o servidor."))
+    .finally(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = "Prosseguir para pagamento";
+    });
 });
