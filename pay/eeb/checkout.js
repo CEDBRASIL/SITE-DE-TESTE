@@ -13,6 +13,7 @@ async function fetchWithTimeout(resource, options = {}, timeout = 10000) {
   return response;
 }
 
+// Melhorias na validação e integração com o backend
 async function enviarCheckout() {
   const nome = document.getElementById("nome").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -20,7 +21,7 @@ async function enviarCheckout() {
   const whatsapp = whatsappRaw.replace(/\D/g, '');
 
   const cursosSelecionados = Array.from(document.querySelectorAll("input[name='curso']:checked"))
-    .map(el => el.value); // agora envia strings
+    .map(el => el.value);
 
   if (!nome || !email || !whatsapp || cursosSelecionados.length === 0) {
     mostrarMsg("Preencha todos os campos e selecione ao menos um curso.", false);
@@ -29,10 +30,8 @@ async function enviarCheckout() {
 
   const payload = { nome, email, whatsapp, cursos: cursosSelecionados };
 
-  console.log("Payload enviado:", payload);
-
   try {
-    const resposta = await fetchWithTimeout("https://matriculaapimp.onrender.com/checkout", {
+    const resposta = await fetchWithTimeout("https://cedbrasilia.com.br/pay/eeb/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -40,27 +39,17 @@ async function enviarCheckout() {
 
     const resultado = await resposta.json();
 
-    console.log("Resposta da API:", resultado);
-
     if (resposta.ok) {
       mostrarMsg(`✅ Matrícula iniciada! Redirecionando para pagamento...`, true);
-
-      await enviarLogDiscord(`✅ Matrícula iniciada para: **${nome}** | Email: **${email}**`);
-
       if (resultado.mp_link) {
-        setTimeout(() => {
-          window.location.href = resultado.mp_link;
-        }, 2000);
+        window.location.href = resultado.mp_link;
       }
     } else {
       const erroMsg = resultado.detail || resultado.message || JSON.stringify(resultado);
       mostrarMsg(`❌ Erro: ${erroMsg}`, false);
-      await enviarLogDiscord(`❌ Falha na matrícula para: **${nome}** | Erro: ${erroMsg}`);
     }
   } catch (erro) {
-    console.error("Erro na requisição:", erro);
     mostrarMsg("❌ Erro ao conectar com o servidor.", false);
-    await enviarLogDiscord(`❌ Erro ao conectar com o servidor para: **${nome}** | Erro: ${erro.message}`);
   }
 }
 
