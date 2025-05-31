@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Matrícula Online - CED</title>
+  <title>Assinatura Online - CED</title>
   <script src="checkout.js" defer></script>
   <style>
     body {
@@ -80,16 +80,6 @@
       background: #00cc6e;
     }
 
-    #cursosContainer label {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-
-    #cursosContainer input[type="checkbox"] {
-      margin-right: 0.5rem;
-    }
-
     .error-message {
       color: #ff4d4d;
       font-size: 0.9rem;
@@ -99,8 +89,8 @@
 </head>
 <body>
   <div class="form-container">
-    <h1>Formulário de Matrícula</h1>
-    <form id="matriculaForm">
+    <h1>Assinatura Online</h1>
+    <form id="assinaturaForm">
       <label>Nome:
         <input type="text" id="nome" required>
       </label>
@@ -112,12 +102,12 @@
       </label>
 
       <fieldset>
-        <legend>Cursos disponíveis</legend>
-        <div id="cursosContainer">Carregando cursos...</div>
+        <legend>Plano de Assinatura</legend>
+        <p>Assinatura mensal no valor de R$59,90</p>
       </fieldset>
 
-      <button type="submit">Prosseguir para pagamento</button>
-      <div class="error-message" id="errorMessage" style="display: none;">Preencha todos os campos e selecione ao menos um curso.</div>
+      <button type="submit">Assinar Agora</button>
+      <div class="error-message" id="errorMessage" style="display: none;">Preencha todos os campos corretamente.</div>
     </form>
   </div>
 </body>

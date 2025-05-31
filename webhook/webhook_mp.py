@@ -14,13 +14,17 @@ async def webhook_mp(evento: dict):
     Rota que o Mercado Pago chama quando um pagamento muda de status.
     Se estiver aprovado, envia os dados do aluno para /matricular.
     """
-    if evento.get("type") != "payment":
+    if evento.get("type") not in ["payment", "subscription_payment"]:
         return {"msg": "evento ignorado"}
 
-    payment_id = evento["data"]["id"]
+    payment_id = evento["data"].get("id")
+    if not payment_id:
+        log.error("ID de pagamento ausente no evento", evento=evento)
+        raise HTTPException(400, "ID de pagamento ausente")
+
     headers = {"Authorization": f"Bearer {MP_ACCESS_TOKEN}"}
 
-    # Consulta os dados do pagamento
+    # Consulta os dados do pagamento ou assinatura
     async with httpx.AsyncClient(http2=True) as client:
         resp = await client.get(f"{MP_BASE_URL}/v1/payments/{payment_id}", headers=headers)
         if resp.status_code != 200:
@@ -38,7 +42,8 @@ async def webhook_mp(evento: dict):
         "nome":     meta.get("nome"),
         "email":    meta.get("email"),
         "whatsapp": meta.get("whatsapp"),
-        "cursos":   [c.strip() for c in meta.get("cursos", "").split(",") if c.strip()],
+        "plano":    "mensal",
+        "valor":    59.90
     }
 
     # Chama o endpoint de matrícula com os dados do aluno
