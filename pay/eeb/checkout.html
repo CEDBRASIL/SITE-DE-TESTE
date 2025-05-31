@@ -5,29 +5,120 @@
   <title>Matrícula Online - CED</title>
   <script src="checkout.js" defer></script>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#121212;color:#e0e0e0;margin:0;padding:2rem}
-    h1{color:#00ff88}
-    fieldset{border:1px solid #444;padding:1rem;border-radius:8px}
-    label{display:block;margin-bottom:.5rem}
-    input[type="text"],input[type="email"],button{padding:.5rem;border-radius:6px;border:1px solid #444;background:#1e1e1e;color:#e0e0e0}
-    button{background:#00ff88;color:#121212;font-weight:bold;cursor:pointer}
-    button:hover{background:#00cc6e}
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1e1e1e, #121212);
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #00ff88;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #121212;
+      color: #e0e0e0;
+      margin-top: 0.5rem;
+    }
+
+    fieldset {
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    legend {
+      color: #00ff88;
+      font-weight: bold;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: none;
+      background: #00ff88;
+      color: #121212;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #00cc6e;
+    }
+
+    #cursosContainer label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    #cursosContainer input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+
+    .error-message {
+      color: #ff4d4d;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Formulário de Matrícula</h1>
-  <form id="matriculaForm">
-    <label>Nome: <input type="text" id="nome" required></label>
-    <label>E-mail: <input type="email" id="email" required></label>
-    <label>WhatsApp: <input type="text" id="whatsapp" required placeholder="61999998888"></label>
+  <div class="form-container">
+    <h1>Formulário de Matrícula</h1>
+    <form id="matriculaForm">
+      <label>Nome:
+        <input type="text" id="nome" required>
+      </label>
+      <label>E-mail:
+        <input type="email" id="email" required>
+      </label>
+      <label>WhatsApp:
+        <input type="text" id="whatsapp" required placeholder="61999998888">
+      </label>
 
-    <fieldset>
-      <legend>Cursos disponíveis</legend>
-      <div id="cursosContainer">Carregando cursos...</div>
-    </fieldset>
+      <fieldset>
+        <legend>Cursos disponíveis</legend>
+        <div id="cursosContainer">Carregando cursos...</div>
+      </fieldset>
 
-    <br>
-    <button type="submit">Prosseguir para pagamento</button>
-  </form>
+      <button type="submit">Prosseguir para pagamento</button>
+      <div class="error-message" id="errorMessage" style="display: none;">Preencha todos os campos e selecione ao menos um curso.</div>
+    </form>
+  </div>
 </body>
 </html>
