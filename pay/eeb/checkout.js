@@ -4,15 +4,24 @@ document.addEventListener("DOMContentLoaded", () => listarCursos());
 
 function listarCursos() {
   fetch(API_BASE + "/cursos")
-    .then(r => r.json())
+    .then(res => res.json())
     .then(json => {
       const container = document.getElementById("cursosContainer");
       container.innerHTML = "";
-      Object.keys(json.cursos).forEach(nome => {
-        const id = "curso-" + nome.replace(/\s+/g, "-");
+
+      // Verifique se a API retorna um objeto com "cursos" como array ou objeto
+      const cursos = Array.isArray(json.cursos) ? json.cursos : Object.values(json.cursos);
+
+      cursos.forEach(curso => {
+        // Ajuste para usar o id real do curso, se existir
+        const idCurso = curso.id || curso.codigo || curso.nome || curso;
+        const nomeCurso = curso.nome || curso.titulo || curso;
+
+        const inputId = "curso-" + idCurso.toString().replace(/\s+/g, "-").toLowerCase();
+
         container.insertAdjacentHTML(
           "beforeend",
-          `<label><input type="checkbox" name="cursos" value="${nome}" id="${id}"> ${nome}</label>`
+          `<label><input type="checkbox" name="cursos" value="${idCurso}" id="${inputId}"> ${nomeCurso}</label><br>`
         );
       });
     })
@@ -48,12 +57,12 @@ document.getElementById("matriculaForm").addEventListener("submit", e => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       nome,
-      email, // Garantir que o email seja enviado
+      email,
       whatsapp,
       cursos
     })
   })
-    .then(r => r.json())
+    .then(res => res.json())
     .then(json => {
       if (json.mp_link) {
         window.location.href = json.mp_link;
