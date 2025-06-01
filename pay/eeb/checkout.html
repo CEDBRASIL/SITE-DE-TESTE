@@ -1,33 +1,74 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Matrícula Online - CED</title>
-  <script src="checkout.js" defer></script>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#121212;color:#e0e0e0;margin:0;padding:2rem}
-    h1{color:#00ff88}
-    fieldset{border:1px solid #444;padding:1rem;border-radius:8px}
-    label{display:block;margin-bottom:.5rem}
-    input[type="text"],input[type="email"],button{padding:.5rem;border-radius:6px;border:1px solid #444;background:#1e1e1e;color:#e0e0e0}
-    button{background:#00ff88;color:#121212;font-weight:bold;cursor:pointer}
-    button:hover{background:#00cc6e}
-  </style>
+  <title>Checkout - CED Brasília</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- CSS customizado -->
+  <link rel="stylesheet" href="checkout.css">
 </head>
-<body>
-  <h1>Formulário de Matrícula</h1>
-  <form id="matriculaForm">
-    <label>Nome: <input type="text" id="nome" required></label>
-    <label>E-mail: <input type="email" id="email" required></label>
-    <label>WhatsApp: <input type="text" id="whatsapp" required placeholder="61999998888"></label>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="card-title mb-4">Inscrição no Curso EEB</h2>
+            <form id="checkoutForm">
+              <div class="mb-3">
+                <label class="form-label">Nome Completo</label>
+                <input type="text" class="form-control" id="name" required placeholder="Seu nome completo">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">WhatsApp (somente números)</label>
+                <input type="text" class="form-control" id="whatsapp" required placeholder="Ex.: 5591999123456">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Curso Desejado</label>
+                <select class="form-select" id="course" required>
+                  <option value="EEB">Especialização EEB - Exemplo</option>
+                  <!-- Poderiam ser adicionados mais cursos aqui -->
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Continuar para Pagamento</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <fieldset>
-      <legend>Cursos disponíveis</legend>
-      <div id="cursosContainer">Carregando cursos...</div>
-    </fieldset>
+  <!-- JavaScript para enviar o formulário -->
+  <script>
+    const form = document.getElementById('checkoutForm');
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const course = document.getElementById('course').value;
 
-    <br>
-    <button type="submit">Prosseguir para pagamento</button>
-  </form>
+      // Chama a API para criar a preferência de pagamento
+      try {
+        const response = await fetch('https://api.cedbrasilia.com.br/create_preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, whatsapp, course })
+        });
+        const data = await response.json();
+        if (data.init_point) {
+          // Redireciona para o Mercado Pago
+          window.location.href = data.init_point;
+        } else {
+          alert('Erro ao iniciar pagamento.');
+          console.error(data);
+        }
+      } catch (err) {
+        alert('Falha na conexão com o servidor.');
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
