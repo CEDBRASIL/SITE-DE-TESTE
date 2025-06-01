@@ -28,8 +28,7 @@
               <div class="mb-3">
                 <label class="form-label">Curso Desejado</label>
                 <select class="form-select" id="course" required>
-                  <option value="EEB">Especialização EEB - Exemplo</option>
-                  <!-- Poderiam ser adicionados mais cursos aqui -->
+                  <option value="">Selecione um curso</option>
                 </select>
               </div>
               <button type="submit" class="btn btn-primary w-100">Continuar para Pagamento</button>
@@ -42,6 +41,26 @@
 
   <!-- JavaScript para enviar o formulário -->
   <script>
+    // Preencher o select de cursos dinamicamente
+    document.addEventListener('DOMContentLoaded', async function() {
+      const select = document.getElementById('course');
+      try {
+        const response = await fetch('https://api.cedbrasil.com.br/cursos');
+        const data = await response.json();
+        const cursos = Array.isArray(data.cursos) ? data.cursos : Object.values(data.cursos);
+        cursos.forEach(curso => {
+          const idCurso = curso.id || curso.codigo || curso.nome || curso;
+          const nomeCurso = curso.nome || curso.titulo || curso;
+          const option = document.createElement('option');
+          option.value = idCurso;
+          option.textContent = nomeCurso;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        select.innerHTML = '<option value="">Erro ao carregar cursos</option>';
+      }
+    });
+
     const form = document.getElementById('checkoutForm');
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
