@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center px-4">
   <div class="max-w-xl w-full bg-gray-800 p-6 rounded-2xl shadow-2xl">
-    <h2 class="text-3xl font-bold mb-6 text-center text-green-400">Assinatura CED</h2>
+    <h2 class="text-3xl font-bold mb-6 text-center text-green-400">Assinatura CED - R$59,90/mês</h2>
     <form method="POST" action="https://api.cedbrasilia.com.br/pay/eeb/checkout" class="space-y-4">
       <div>
         <label class="block mb-1">Nome completo</label>
@@ -28,7 +28,7 @@
       <div>
         <label class="block mb-2 font-semibold text-green-400">Cursos desejados</label>
         <div id="cursosContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-white">
-          <!-- Cursos serão carregados aqui via JS -->
+          <!-- Cursos vão aparecer aqui -->
         </div>
       </div>
 
@@ -43,8 +43,10 @@
 
     async function listarCursos() {
       try {
-        const r = await fetch(`${API_BASE}/cursos`);
-        const json = await r.json();
+        const response = await fetch(`${API_BASE}/cursos`);
+        if (!response.ok) throw new Error("Erro na resposta da API");
+
+        const json = await response.json();
         const container = document.getElementById("cursosContainer");
         container.innerHTML = "";
 
@@ -58,7 +60,10 @@
           `);
         });
       } catch (e) {
-        document.getElementById("cursosContainer").innerHTML = "<p class='text-red-400'>Erro ao carregar cursos.</p>";
+        console.error("Erro ao carregar cursos:", e);
+        document.getElementById("cursosContainer").innerHTML = `
+          <p class="text-red-400">Erro ao carregar cursos. Tente novamente mais tarde.</p>
+        `;
       }
     }
 
