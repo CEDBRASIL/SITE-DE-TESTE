@@ -46,7 +46,7 @@ document.getElementById("matriculaForm").addEventListener("submit", e => {
   fetch(API_BASE + "/pay/eeb/checkout", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ nome, email, whatsapp, cursos })
+    body: JSON.stringify({ nome, payer_email, whatsapp, cursos })
   })
   .then(r => r.json())
   .then(json => {
