@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Pagamento CED</title>
+</head>
+<body>
+  <h2>Teste Cadastro e Pagamento - CED</h2>
+  <form action="https://api.cedbrasilia.com.br/checkoutteste/pay/eeb/checkoutteste" method="post">
+    Nome: <input name="nome" type="text" required><br>
+    WhatsApp: <input name="telefone" type="text" required><br>
+    Email: <input name="email" type="email" required><br>
+    <h3>Selecione os cursos:</h3>
+    <input type="checkbox" name="cursos" value="Pacote Office"> Pacote Office<br>
+    <input type="checkbox" name="cursos" value="Informática Essencial"> Informática Essencial<br>
+    <input type="checkbox" name="cursos" value="Inglês Fluente"> Inglês Fluente<br>
+    <input type="checkbox" name="cursos" value="Design Gráfico"> Design Gráfico<br>
+    <br>
+    <button type="submit">Gerar link de pagamento (Sandbox)</button>
+  </form>
+</body>
+</html>
