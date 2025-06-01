@@ -43,7 +43,7 @@ document.getElementById("matriculaForm").addEventListener("submit", e => {
   submitButton.disabled = true;
   submitButton.textContent = "Processando...";
 
-  fetch(API_BASE + "/pay/eeb/checkout", {
+  fetch(API_BASE + "/matricularmercadopago", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({ nome, email, whatsapp, cursos })
