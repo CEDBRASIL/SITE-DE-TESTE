@@ -1,3 +1,7 @@
+// Salvo para referência futura:
+// Backend: api.cedbrasilia.com.br/
+// Frontend: www.cedbrasilia.com.br/
+
 const API_BASE = "https://api.cedbrasilia.com.br";
 
 document.addEventListener("DOMContentLoaded", () => listarCursos());
