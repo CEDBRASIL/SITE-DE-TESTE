@@ -45,7 +45,7 @@
     document.addEventListener('DOMContentLoaded', async function() {
       const select = document.getElementById('course');
       try {
-        const response = await fetch('https://api.cedbrasil.com.br/cursos');
+        const response = await fetch('https://api.cedbrasilia.com.br/cursos');
         const data = await response.json();
         const cursos = Array.isArray(data.cursos) ? data.cursos : Object.values(data.cursos);
         cursos.forEach(curso => {
